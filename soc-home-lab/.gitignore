@@ -1,0 +1,53 @@
+# === Secrets & credentials ===
+*.env
+.env.*
+secrets/
+**/credentials.*
+**/*password*
+**/*secret*
+*.pem
+*.key
+*.pfx
+*.p12
+
+# === Exports de configuration bruts (peuvent contenir des secrets/hashs) ===
+configs/**/*.raw
+configs/**/backup/
+*.xml.bak
+*.conf.bak
+opnsense-config-*.xml
+wazuh-*.tar.gz
+
+# === VMware ===
+*.vmdk
+*.vmem
+*.vmss
+*.vmsn
+*.nvram
+*.vmxf
+*.log
+*.lck/
+*.vmx~
+
+# === Dumps / exports d'AD ===
+*.ntds
+*.dit
+ntds.dit
+SYSTEM.hive
+SECURITY.hive
+
+# === Résultats d'outils offensifs (peuvent contenir des credentials capturés) ===
+gophish-results/
+bloodhound-output/
+*.kirbi
+*.ccache
+hashes.txt
+loot/
+
+# === Divers ===
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+.idea/
+.vscode/

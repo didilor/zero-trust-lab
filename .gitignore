@@ -1,0 +1,60 @@
+# === Secrets & credentials ===
+*.env
+.env.*
+secrets/
+**/credentials.*
+**/*password*
+**/*secret*
+
+# === PKI — certificats et clés privées ===
+*.key
+*.pem
+*.pfx
+*.p12
+*.csr
+*.crt
+!**/ca-public/*.crt
+ca-private/
+private/
+
+# === Keycloak ===
+realm-export-*.json
+*.realm.json
+keycloak-secrets/
+client-secrets.txt
+
+# === OAuth2 Proxy ===
+oauth2-proxy.cfg
+cookie-secret*
+*.oauth2proxy.env
+
+# === NGINX ===
+*.conf.local
+ssl/
+
+# === Exports de configuration bruts ===
+configs/**/*.raw
+configs/**/backup/
+*.xml.bak
+*.conf.bak
+
+# === Proxmox / VM ===
+*.vma
+*.vma.gz
+*.qcow2
+*.raw.img
+
+# === Dumps / exports d'AD ===
+*.ntds
+*.dit
+ntds.dit
+SYSTEM.hive
+SECURITY.hive
+
+# === Divers ===
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+.idea/
+.vscode/
