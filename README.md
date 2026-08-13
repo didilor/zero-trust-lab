@@ -8,7 +8,7 @@ Lab de sécurité personnel pour la mise en pratique d'une architecture Zero Tru
 - Pratiquer l'intégration PKI ↔ AD ↔ IAM (Keycloak) ↔ reverse proxy ↔ client
 - Faire superviser cette architecture par le SOC (Wazuh) déjà en place sur un lab séparé, en gardant une segmentation réseau stricte
 
-## 🏗️ Architecture
+##  Architecture
 
 ```
                  ┌──────────────┐
