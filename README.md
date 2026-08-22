@@ -7,7 +7,8 @@ Mettre en œuvre les principes Zero Trust (vérification systématique, moindre 
 Pratiquer l'intégration PKI ↔ AD ↔ IAM (Keycloak) ↔ reverse proxy ↔ client
 Faire superviser cette architecture par le SOC (Wazuh) déjà en place sur un lab séparé, en gardant une segmentation réseau stricte
 Architecture
-       <img width="634" height="422" alt="image" src="https://github.com/user-attachments/assets/7fda9627-0e19-4282-815f-a5778b553caa" />
+       
+<img width="648" height="426" alt="Capture d&#39;écran 2026-08-22 161552" src="https://github.com/user-attachments/assets/3869b5f4-f1d7-47d7-8d24-3a960613e917" />
 
 
 Schéma détaillé, flux et choix réseau dans docs/architecture.md
@@ -33,6 +34,8 @@ Hébergé sur Proxmox, sur le même serveur physique que le SOC home lab, mais s
  Interconnexion avec le SOC pour supervision Wazuh
 🚀 Évolutions (renforcement de l'architecture)
 ### Architecture avec haute disponibilité
+<img width="1538" height="770" alt="Capture d&#39;écran 2026-08-22 162058" src="https://github.com/user-attachments/assets/b6993db6-928e-45a3-af12-c96e28549ece" />
+
     
           <img width="1538" height="770" alt="Capture d&#39;écran 2026-08-22 162058" src="https://github.com/user-attachments/assets/31cc2f8f-a64b-467d-88d5-12c4fc2659f5" />
 > KC01 et KC02 partagent le même état applicatif via PostgreSQL — pas de synchronisation manuelle entre les deux nœuds. Détails et tests de bascule dans [`docs/ha-setup.md`](docs/ha-setup.md).
