@@ -7,8 +7,8 @@ Mettre en œuvre les principes Zero Trust (vérification systématique, moindre 
 Pratiquer l'intégration PKI ↔ AD ↔ IAM (Keycloak) ↔ reverse proxy ↔ client
 Faire superviser cette architecture par le SOC (Wazuh) déjà en place sur un lab séparé, en gardant une segmentation réseau stricte
 Architecture
-          <img width="1538" height="770" alt="Capture d&#39;écran 2026-08-22 162058" src="https://github.com/user-attachments/assets/31cc2f8f-a64b-467d-88d5-12c4fc2659f5" />
-       
+       <img width="634" height="422" alt="image" src="https://github.com/user-attachments/assets/7fda9627-0e19-4282-815f-a5778b553caa" />
+
 
 Schéma détaillé, flux et choix réseau dans docs/architecture.md
 
@@ -33,26 +33,8 @@ Hébergé sur Proxmox, sur le même serveur physique que le SOC home lab, mais s
  Interconnexion avec le SOC pour supervision Wazuh
 🚀 Évolutions (renforcement de l'architecture)
 ### Architecture avec haute disponibilité
-    ┌──────────────┐         ┌──────────────┐
-    │  SRV-AD01    │◄───────►│  SRV-AD02    │
-    │ Active Dir.  │  répli- │ Active Dir.   │
-    │ (primaire)   │ cation  │ (réplica)     │
-    └──────┬───────┘         └──────┬───────┘
-           │                        │
-           │      LDAP/LDAPS        │
-           ▼                        ▼
-    ┌──────────────┐         ┌──────────────┐
-    │  SRV-KC01    │         │  SRV-KC02    │
-    │  Keycloak    │         │  Keycloak    │
-    └──────┬───────┘         └──────┬───────┘
-           │                        │
-           └───────────┬────────────┘
-                        ▼
-                ┌───────────────┐
-                │   SRV-DB01    │
-                │  PostgreSQL   │
-                │  (base partagée) │
-                └───────────────┘
+    
+          <img width="1538" height="770" alt="Capture d&#39;écran 2026-08-22 162058" src="https://github.com/user-attachments/assets/31cc2f8f-a64b-467d-88d5-12c4fc2659f5" />
 > KC01 et KC02 partagent le même état applicatif via PostgreSQL — pas de synchronisation manuelle entre les deux nœuds. Détails et tests de bascule dans [`docs/ha-setup.md`](docs/ha-setup.md).
  Haute disponibilité Active Directory (SRV-AD02, réplication multi-maîtres, test de bascule validé)
  Haute disponibilité Keycloak (SRV-KC02, base PostgreSQL partagée sur SRV-DB01, test de bascule validé)
