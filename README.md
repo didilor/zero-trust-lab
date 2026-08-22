@@ -7,31 +7,8 @@ Mettre en œuvre les principes Zero Trust (vérification systématique, moindre 
 Pratiquer l'intégration PKI ↔ AD ↔ IAM (Keycloak) ↔ reverse proxy ↔ client
 Faire superviser cette architecture par le SOC (Wazuh) déjà en place sur un lab séparé, en gardant une segmentation réseau stricte
 Architecture
-                 ┌──────────────┐
-                 │   SRV-PKI    │
-                 │    AD CS     │
-                 └──────┬───────┘
-                        │
-                        ▼
-┌─────────────┐   LDAP/LDAPS   ┌─────────────┐
-│  SRV-AD1    │◄──────────────►│  Keycloak   │
-│ Active Dir. │                 │ OIDC + MFA  │
-└─────────────┘                 └──────┬──────┘
-                                      │
-                                  OIDC / HTTPS
-                                      │
-                                      ▼
-                              ┌──────────────┐
-                              │   SRV-WEB    │
-                              │ NGINX        │
-                              │ OAuth2 Proxy │
-                              └──────┬───────┘
-                                     │
-                                     ▼
-                              ┌──────────────┐
-                              │ Windows 11   │
-                              │    Client    │
-                              └──────────────┘
+          <img width="1538" height="770" alt="Capture d&#39;écran 2026-08-22 162058" src="https://github.com/user-attachments/assets/31cc2f8f-a64b-467d-88d5-12c4fc2659f5" />
+       
 
 Schéma détaillé, flux et choix réseau dans docs/architecture.md
 
