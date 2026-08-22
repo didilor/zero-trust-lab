@@ -1,0 +1,47 @@
+---
+- name: Configurer PostgreSQL pour Keycloak (SRV-DB01)
+  hosts: srv-db01
+  become: true
+
+  vars:
+    keycloak_db_name: keycloak
+    keycloak_db_user: keycloak
+    kc_nodes:
+      - 192.168.226.21
+      - 192.168.226.22
+
+  tasks:
+    - name: Installer PostgreSQL
+      apt:
+        name: postgresql
+        state: present
+        update_cache: true
+
+    - name: Créer la base de données keycloak
+      become_user: postgres
+      postgresql_db:
+        name: "{{ keycloak_db_name }}"
+
+    - name: Créer l'utilisateur keycloak
+      become_user: postgres
+      postgresql_user:
+        db: "{{ keycloak_db_name }}"
+        name: "{{ keycloak_db_user }}"
+        password: "{{ keycloak_db_password }}"
+
+    - name: Ouvrir l'écoute réseau (listen_addresses)
+      lineinfile:
+        path: /etc/postgresql/*/main/postgresql.conf
+        regexp: "^#?listen_addresses"
+        line: "listen_addresses = '*'"
+
+    - name: Autoriser les nœuds Keycloak (pg_hba.conf)
+      lineinfile:
+        path: /etc/postgresql/*/main/pg_hba.conf
+        line: "host    {{ keycloak_db_name }}    {{ keycloak_db_user }}    {{ item }}/32    scram-sha-256"
+      loop: "{{ kc_nodes }}"
+
+    - name: Redémarrer PostgreSQL
+      systemd:
+        name: postgresql
+        state: restarted
