@@ -7,9 +7,8 @@ Mettre en œuvre les principes Zero Trust (vérification systématique, moindre 
 Pratiquer l'intégration PKI ↔ AD ↔ IAM (Keycloak) ↔ reverse proxy ↔ client
 Faire superviser cette architecture par le SOC (Wazuh) déjà en place sur un lab séparé, en gardant une segmentation réseau stricte
 Architecture
-       
-<img width="648" height="426" alt="Capture d&#39;écran 2026-08-22 161552" src="https://github.com/user-attachments/assets/3869b5f4-f1d7-47d7-8d24-3a960613e917" />
 
+Afficher l'image
 
 Schéma détaillé, flux et choix réseau dans docs/architecture.md
 
@@ -33,12 +32,11 @@ Hébergé sur Proxmox, sur le même serveur physique que le SOC home lab, mais s
  Enrôlement du client Windows 11
  Interconnexion avec le SOC pour supervision Wazuh
 🚀 Évolutions (renforcement de l'architecture)
-### Architecture avec haute disponibilité
-<img width="1538" height="770" alt="Capture d&#39;écran 2026-08-22 162058" src="https://github.com/user-attachments/assets/b6993db6-928e-45a3-af12-c96e28549ece" />
 
-    
-          <img width="1538" height="770" alt="Capture d&#39;écran 2026-08-22 162058" src="https://github.com/user-attachments/assets/31cc2f8f-a64b-467d-88d5-12c4fc2659f5" />
-> KC01 et KC02 partagent le même état applicatif via PostgreSQL — pas de synchronisation manuelle entre les deux nœuds. Détails et tests de bascule dans [`docs/ha-setup.md`](docs/ha-setup.md).
+Afficher l'image
+
+KC01 et KC02 partagent le même état applicatif via PostgreSQL — pas de synchronisation manuelle entre les deux nœuds. Détails et tests de bascule dans docs/ha-setup.md.
+
  Haute disponibilité Active Directory (SRV-AD02, réplication multi-maîtres, test de bascule validé)
  Haute disponibilité Keycloak (SRV-KC02, base PostgreSQL partagée sur SRV-DB01, test de bascule validé)
  Test de charge sur l'application protégée (k6 — 782 requêtes, 100 % de succès, p95 98,41 ms)
