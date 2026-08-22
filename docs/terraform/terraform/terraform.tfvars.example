@@ -1,4 +1,0 @@
-proxmox_endpoint  = "https://192.168.1.2:8006/api2/json"
-proxmox_api_token = "root@pam!terraform=CHANGE-ME"
-proxmox_node      = "pve"
-template_vm_id    = 102
