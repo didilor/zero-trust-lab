@@ -1,16 +1,12 @@
-# Zero Trust Lab
+Zero Trust Lab
 
 Lab de sécurité personnel pour la mise en pratique d'une architecture Zero Trust : PKI interne, gestion d'identité centralisée (Keycloak/OIDC), authentification forte (MFA), et reverse proxy authentifiant.
 
-## 🎯 Objectifs
-
-- Mettre en œuvre les principes Zero Trust (vérification systématique, moindre privilège, aucune confiance implicite basée sur le réseau) sur une infrastructure réaliste
-- Pratiquer l'intégration PKI ↔ AD ↔ IAM (Keycloak) ↔ reverse proxy ↔ client
-- Faire superviser cette architecture par le SOC (Wazuh) déjà en place sur un lab séparé, en gardant une segmentation réseau stricte
-
-##  Architecture
-
-```
+🎯 Objectifs
+Mettre en œuvre les principes Zero Trust (vérification systématique, moindre privilège, aucune confiance implicite basée sur le réseau) sur une infrastructure réaliste
+Pratiquer l'intégration PKI ↔ AD ↔ IAM (Keycloak) ↔ reverse proxy ↔ client
+Faire superviser cette architecture par le SOC (Wazuh) déjà en place sur un lab séparé, en gardant une segmentation réseau stricte
+Architecture
                  ┌──────────────┐
                  │   SRV-PKI    │
                  │    AD CS     │
@@ -36,38 +32,64 @@ Lab de sécurité personnel pour la mise en pratique d'une architecture Zero Tru
                               │ Windows 11   │
                               │    Client    │
                               └──────────────┘
-```
 
-> Schéma détaillé, flux et choix réseau dans [`docs/architecture.md`](docs/architecture.md)
+Schéma détaillé, flux et choix réseau dans docs/architecture.md
 
-## 🧰 Composants
+🧰 Composants
+Composant	Rôle
+SRV-PKI	Autorité de certification interne (AD CS)
+SRV-AD1	Active Directory, source d'identité
+Keycloak	IAM — authentification OIDC + MFA
+SRV-WEB	Reverse proxy authentifiant (NGINX + OAuth2 Proxy)
+Client Windows 11	Poste utilisateur final
+🌐 Infrastructure
 
-| Composant | Rôle |
-|---|---|
-| SRV-PKI | Autorité de certification interne (AD CS) |
-| SRV-AD5 | Active Directory, source d'identité |
-| Keycloak | IAM — authentification OIDC + MFA |
-| SRV-WEB | Reverse proxy authentifiant (NGINX + OAuth2 Proxy) |
-| Client Windows 11 | Poste utilisateur final |
+Hébergé sur Proxmox, sur le même serveur physique que le SOC home lab, mais sur un bridge réseau totalement isolé. La communication entre les deux labs passe par un point de contrôle unique (OPNsense du SOC) — voir docs/interconnexion-soc.md.
 
-## 🌐 Infrastructure
+✅ État d'avancement
+ Architecture définie (PKI, AD, Keycloak, reverse proxy, client)
+ Déploiement SRV-PKI (AD CS) — certificat délivré au contrôleur de domaine
+ Déploiement SRV-AD1
+ Déploiement et configuration Keycloak (OIDC + MFA)
+ Déploiement SRV-WEB (NGINX + OAuth2 Proxy)
+ Enrôlement du client Windows 11
+ Interconnexion avec le SOC pour supervision Wazuh
+🚀 Évolutions (renforcement de l'architecture)
+### Architecture avec haute disponibilité
+    ┌──────────────┐         ┌──────────────┐
+    │  SRV-AD01    │◄───────►│  SRV-AD02    │
+    │ Active Dir.  │  répli- │ Active Dir.   │
+    │ (primaire)   │ cation  │ (réplica)     │
+    └──────┬───────┘         └──────┬───────┘
+           │                        │
+           │      LDAP/LDAPS        │
+           ▼                        ▼
+    ┌──────────────┐         ┌──────────────┐
+    │  SRV-KC01    │         │  SRV-KC02    │
+    │  Keycloak    │         │  Keycloak    │
+    └──────┬───────┘         └──────┬───────┘
+           │                        │
+           └───────────┬────────────┘
+                        ▼
+                ┌───────────────┐
+                │   SRV-DB01    │
+                │  PostgreSQL   │
+                │  (base partagée) │
+                └───────────────┘
+> KC01 et KC02 partagent le même état applicatif via PostgreSQL — pas de synchronisation manuelle entre les deux nœuds. Détails et tests de bascule dans [`docs/ha-setup.md`](docs/ha-setup.md).
+ Haute disponibilité Active Directory (SRV-AD02, réplication multi-maîtres, test de bascule validé)
+ Haute disponibilité Keycloak (SRV-KC02, base PostgreSQL partagée sur SRV-DB01, test de bascule validé)
+ Test de charge sur l'application protégée (k6 — 782 requêtes, 100 % de succès, p95 98,41 ms)
+ Squelette Infrastructure as Code (Terraform + Ansible, validé sur SRV-DB01)
+ Extension de la PKI interne à Keycloak et NGINX (actuellement en certificats auto-signés)
+ Haute disponibilité du reverse proxy (NGINX/OAuth2 Proxy)
 
-Hébergé sur **Proxmox**, sur le même serveur physique que le [SOC home lab](../soc-home-lab), mais sur un **bridge réseau totalement isolé**. La communication entre les deux labs passe par un point de contrôle unique (OPNsense du SOC) — voir [`docs/interconnexion-soc.md`](docs/interconnexion-soc.md).
+Détails techniques dans docs/ha-setup.md et docs/load-testing.md
 
-## ✅ État d'avancement
-
-- [x] Architecture définie (PKI, AD, Keycloak, reverse proxy, client)
-- [ ] Déploiement SRV-PKI (AD CS)
-- [ ] Déploiement SRV-AD1
-- [ ] Déploiement et configuration Keycloak (OIDC + MFA)
-- [ ] Déploiement SRV-WEB (NGINX + OAuth2 Proxy)
-- [ ] Enrôlement du client Windows 11
-- [ ] Interconnexion avec le SOC pour supervision Wazuh
-
-## 🔗 Lien avec le SOC
+🔗 Lien avec le SOC
 
 Le SOC (Wazuh) doit superviser les événements de ce lab Zero Trust (authentifications, échecs MFA, anomalies OIDC) sans que les deux réseaux soient fusionnés. Le flux passe par une interface dédiée sur OPNsense, avec des règles de pare-feu restreintes au strict nécessaire (remontée des logs vers Wazuh uniquement).
 
-## ⚠️ Note
+⚠️ Note
 
-Ce lab est un environnement **isolé à usage pédagogique**. Les configurations partagées ici sont nettoyées de tout secret ou mot de passe réel — voir `.gitignore` (certificats/clés PKI, secrets clients OIDC, cookie secret OAuth2 Proxy notamment).
+Ce lab est un environnement isolé à usage pédagogique. Les configurations partagées ici sont nettoyées de tout secret ou mot de passe réel — voir .gitignore (certificats/clés PKI, secrets clients OIDC, cookie secret OAuth2 Proxy notamment).
