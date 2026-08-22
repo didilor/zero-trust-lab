@@ -8,7 +8,8 @@ Pratiquer l'intégration PKI ↔ AD ↔ IAM (Keycloak) ↔ reverse proxy ↔ cli
 Faire superviser cette architecture par le SOC (Wazuh) déjà en place sur un lab séparé, en gardant une segmentation réseau stricte
 Architecture
 
-Afficher l'image
+<img width="648" height="426" alt="Capture d&#39;écran 2026-08-22 161552" src="https://github.com/user-attachments/assets/da9431c2-a032-40cc-9d8c-5836992bbcdb" />
+
 
 Schéma détaillé, flux et choix réseau dans docs/architecture.md
 
@@ -33,7 +34,8 @@ Hébergé sur Proxmox, sur le même serveur physique que le SOC home lab, mais s
  Interconnexion avec le SOC pour supervision Wazuh
 🚀 Évolutions (renforcement de l'architecture)
 
-Afficher l'image
+<img width="1538" height="770" alt="Capture d&#39;écran 2026-08-22 162058" src="https://github.com/user-attachments/assets/1a0769fc-7a8d-4ad5-8b9d-6caf7f9adc5a" />
+
 
 KC01 et KC02 partagent le même état applicatif via PostgreSQL — pas de synchronisation manuelle entre les deux nœuds. Détails et tests de bascule dans docs/ha-setup.md.
 
